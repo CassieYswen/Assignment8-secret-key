@@ -18,43 +18,12 @@ library(viridis)
 library(ggthemes)
 library(stringr)
 library(plotly)
-#Working directory for .RMD
-knitr::opts_knit$set(echo = TRUE,
-                     root.dir = rprojroot::find_rstudio_root_file())
 
-#Controlling figure output in markdown
-knitr::opts_chunk$set(
-#  fig.height =   
-  fig.width = 6,
-#  fig.asp = .5,
-  out.width = "90%",
-#  out.height = 
- fig.align  = "center",
-  cache = FALSE,
-  eval  = TRUE,
-  echo  = FALSE,
-  warning = FALSE
-)
-
-#My Colours (from viridis)
-my_purple <- "#440154FF"
-my_yellow <- "#FDE725FF"
-
-#Set Theme for ggplot2
-theme_set(theme_bw() + theme(plot.title = element_text(hjust = 0.5), legend.position = "bottom"))
-
-#Set Scientific notation output and decimal places for knitr
-options(scipen = 999)
-options(digits = 4)
-options(dplyr.summarise.inform = FALSE)
 ```
 
 ### leaflet of the entire state of MN
 
-
-
------------------------------------------------------------------------
-
+------------------------------------------------------------------------
 
 ```{r data_read, include = FALSE}
 ### 1.3 Please create 1 ggplotly of Hennepin County using sf, ggmap, tidycensus, ggplot, and plotly
@@ -105,6 +74,3 @@ ggplotly(occupation.gg,
          width   = 800) %>%
     style(hoveron = "fills")
 ```
-
-
-
