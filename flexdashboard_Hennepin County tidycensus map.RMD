@@ -8,13 +8,19 @@ output:
 ---
 
 ```{r setup, include = FALSE, echo = FALSE}
+library(sf)
 library(tidyverse)
-library(lubridate)
-library(gt)
-library(paletteer)
+library(ggmap)
+library(tmap)
+library(tidycensus)
+library(leaflet)
+library(osmdata)
+library(tigris)
+library(janitor)
+library(viridis)
+library(ggthemes)
+library(stringr)
 library(plotly)
-library(flexdashboard)
-
 #Working directory for .RMD
 knitr::opts_knit$set(echo = TRUE,
                      root.dir = rprojroot::find_rstudio_root_file())
@@ -46,12 +52,18 @@ options(digits = 4)
 options(dplyr.summarise.inform = FALSE)
 ```
 
+### leaflet of the entire state of MN
+
+
+
+-----------------------------------------------------------------------
+
 
 ```{r data_read, include = FALSE}
 ### 1.3 Please create 1 ggplotly of Hennepin County using sf, ggmap, tidycensus, ggplot, and plotly
 ## Request the ACS estimates for * Count of managment, art and social service occupations* in Hennepin County, MN
-```{r}
-#Sys.getenv("CENSUS_API_KEY")
+
+Sys.getenv("CENSUS_API_KEY")
 mn_op.df <- get_acs(
   geography = "tract",
   variables = "C24060_002E", #Code for median rent
@@ -97,6 +109,5 @@ ggplotly(occupation.gg,
     style(hoveron = "fills")
 ```
 
-###add map to the occupation count plot
-```
+
 
