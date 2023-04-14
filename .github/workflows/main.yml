@@ -1,45 +1,61 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+on: [workflow_dispatch]
 
-on:
-  # Runs on pushes targeting the default branch
-  push:
-    branches: ["main"]
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+name: Render Report
 
 jobs:
-  # Single deploy job since we're just deploying
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build-deploy:
     runs-on: ubuntu-latest
+    
+    permissions:
+        contents: write
+        
     steps:
-      - name: Checkout
+      - name: Check out repository
         uses: actions/checkout@v3
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
-        env:
-          TIDYCENSUS_API: ${{ secrets.CENSUS_API_KEY }}
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
+      - name: Setup R
+        uses: r-lib/actions/setup-r@v2
         with:
-          # Upload entire repository
-          path: '.'
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2
+          r-version: '4.2.0' # The R version to download (if necessary) and use.
+ 
+      - name: Install packages
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+            packages:
+               any::knitr
+               any::rmarkdown
+               any::tidyverse
+               any::tidyr
+               any::ggplot2
+               any::tidycensus
+               any::osmdata
+               any::plotly
+               any::htmltools
+               any::sf
+               any::ggmap
+               any::tmap
+               any::tigris
+               any::viridis
+               any::janitor
+               any::gt
+               any::ggthemes
+               any::scales
+      - name: Render document
+        uses: quarto-dev/quarto-actions/render@v2
+        env:
+          MAPS_API_KEY: ${{ secrets.CENSUS_API_KEY }}
+        with:
+          to: html
+          path: A8.qmd
+      - name: Setup git config
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+      - name: Commit
+        run: |
+          git add .
+          git commit -m "Updated report"
+          git push origin main
